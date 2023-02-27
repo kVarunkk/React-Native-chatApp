@@ -30,7 +30,7 @@ function SignIn({ navigation }) {
           // User is signed in, see docs for a list of available properties
           // https://firebase.google.com/docs/reference/js/firebase.User
           const uid = user.uid;
-          navigation.navigate("Chat Screen");
+          navigation.navigate("Choose Room");
           // ...
         } else {
           // User is signed out

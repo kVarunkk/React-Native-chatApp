@@ -4,9 +4,10 @@ import ChatScreen from "./Components/ChatScreen";
 import SignIn from "./Components/SignIn";
 import SignUp from "./Components/SignUp";
 import WelcomeScreen from "./Components/WelcomeScreen";
+import ChooseRoomScreen from "./Components/ChooseRoomScreen";
 import auth from "./database/firebase";
 import { signOut } from "firebase/auth";
-
+import socketIO from "socket.io-client";
 import {
   View,
   Text,
@@ -20,6 +21,8 @@ import {
 } from "react-native";
 
 const Stack = createNativeStackNavigator();
+const ENDPOINT = "https://8c63-203-110-242-42.in.ngrok.io";
+const socket = socketIO.connect(ENDPOINT);
 
 export default function App({ navigation }) {
   return (
@@ -28,6 +31,29 @@ export default function App({ navigation }) {
         <Stack.Screen name="Welcome Screen" component={WelcomeScreen} />
         <Stack.Screen name="Sign in" component={SignIn} />
         <Stack.Screen name="Sign up" component={SignUp} />
+        <Stack.Screen
+          name="Choose Room"
+          component={ChooseRoomScreen}
+          options={{
+            headerRight: () => (
+              <Button
+                onPress={() => {
+                  signOut(auth)
+                    .then(() => {
+                      // Sign-out successful.
+                    })
+                    .catch((error) => {
+                      // An error happened.
+                      console.log(error);
+                    });
+                }}
+                title="Log out"
+                color="red"
+              />
+            ),
+          }}
+          initialParams={{ socket: socket }}
+        />
         <Stack.Screen
           name="Chat Screen"
           component={ChatScreen}
@@ -49,6 +75,7 @@ export default function App({ navigation }) {
               />
             ),
           }}
+          initialParams={{ socket: socket }}
         />
       </Stack.Navigator>
     </NavigationContainer>

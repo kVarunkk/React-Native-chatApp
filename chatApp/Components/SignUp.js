@@ -44,7 +44,7 @@ function SignUp({ navigation }) {
             .then((userCredential) => {
               // Signed in
               const user = userCredential.user;
-              navigation.navigate("Chat Screen");
+              navigation.navigate("Choose Room");
               // ...
             })
             .catch((error) => {

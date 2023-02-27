@@ -19,12 +19,13 @@ import {
   StatusBar,
 } from "react-native";
 import Message from "./Message";
-const ENDPOINT = "https://7a01-203-110-242-42.in.ngrok.io";
+// const ENDPOINT = "https://7a15-203-110-242-42.in.ngrok.io";
 
-export default function ChatScreen({ navigation }) {
+export default function ChatScreen({ route, navigation }) {
+  const { socket, room } = route.params;
   const [text, settext] = useState("");
   const [messages, setMessages] = useState([]);
-  const socket = socketIOClient(ENDPOINT);
+  // const socket = socketIOClient(ENDPOINT);
   const [username, setusername] = useState("");
 
   useEffect(() => {
@@ -63,9 +64,11 @@ export default function ChatScreen({ navigation }) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.heading}>
+        <Text style={styles.heading}>{room}</Text>
+
+        {/* <Text style={styles.heading}>
           Hello {username}, start chatting with your friends now!
-        </Text>
+        </Text> */}
 
         <TextInput
           style={{
@@ -90,9 +93,9 @@ export default function ChatScreen({ navigation }) {
               content: text,
               username: username,
               time: moment().format("MMMM Do YYYY, h:mm:ss a"),
+              room: room,
             });
             settext("");
-            console.log(moment().format("MMMM Do YYYY, h:mm:ss a"));
           }}
         />
 
