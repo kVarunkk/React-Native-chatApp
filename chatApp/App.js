@@ -21,7 +21,7 @@ import {
 } from "react-native";
 
 const Stack = createNativeStackNavigator();
-const ENDPOINT = "https://8c63-203-110-242-42.in.ngrok.io";
+const ENDPOINT = "https://253e-203-110-242-42.in.ngrok.io";
 const socket = socketIO.connect(ENDPOINT);
 
 export default function App({ navigation }) {
@@ -30,7 +30,11 @@ export default function App({ navigation }) {
       <Stack.Navigator>
         <Stack.Screen name="Welcome Screen" component={WelcomeScreen} />
         <Stack.Screen name="Sign in" component={SignIn} />
-        <Stack.Screen name="Sign up" component={SignUp} />
+        <Stack.Screen
+          name="Sign up"
+          component={SignUp}
+          initialParams={{ socket: socket }}
+        />
         <Stack.Screen
           name="Choose Room"
           component={ChooseRoomScreen}

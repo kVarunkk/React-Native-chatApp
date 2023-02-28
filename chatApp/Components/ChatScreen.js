@@ -34,6 +34,10 @@ export default function ChatScreen({ route, navigation }) {
         return [...prevMessages, msg];
       });
     });
+
+    socket.on("setMessages", (messages) => {
+      setMessages(messages);
+    });
   }, []);
 
   useFocusEffect(
@@ -46,6 +50,7 @@ export default function ChatScreen({ route, navigation }) {
           // https://firebase.google.com/docs/reference/js/firebase.User
           const uid = user.uid;
           setusername(user.email);
+          socket.emit("getMessages", room);
           // ...
         } else {
           // User is signed out
@@ -62,19 +67,15 @@ export default function ChatScreen({ route, navigation }) {
   );
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.heading}>{room}</Text>
+    <View style={styles.container}>
+      <Text style={styles.heading}>{room}</Text>
 
-        {/* <Text style={styles.heading}>
-          Hello {username}, start chatting with your friends now!
-        </Text> */}
-
+      <View style={styles.inputContainer}>
         <TextInput
           style={{
             height: 40,
             padding: 10,
-            width: "70%",
+            // width: "70%",
             borderColor: "gray",
             backgroundColor: "#fff",
             borderRadius: 5,
@@ -91,47 +92,60 @@ export default function ChatScreen({ route, navigation }) {
           onPress={() => {
             socket.emit("message", {
               content: text,
-              username: username,
+              postedBy: {
+                username: username,
+              },
               time: moment().format("MMMM Do YYYY, h:mm:ss a"),
               room: room,
             });
             settext("");
           }}
         />
+      </View>
 
-        <View
-          style={{
-            marginTop: 50,
-            fontSize: 20,
-          }}
-        >
+      <View style={{ maxHeight: "70%" }}>
+        <ScrollView style={styles.messageContainer}>
+          {/* <View > */}
           {messages.map((message) => {
             return (
               <Message
                 text={message.content}
-                username={message.username}
+                username={message.postedBy.username}
                 time={message.time}
               ></Message>
             );
           })}
-        </View>
+          {/* </View> */}
+        </ScrollView>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "column",
-    paddingTop: StatusBar.currentHeight,
-    alignItems: "center",
-    justifyContent: "center",
+    // display: "flex",
+    // flexDirection: "column",
+    // paddingTop: StatusBar.currentHeight,
+    // alignItems: "center",
+    // justifyContent: "center",
+    textAlign: "center",
+    width: "100%",
+    padding: 30,
     fontSize: 25,
   },
   heading: {
+    textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 30,
+  },
+
+  inputContainer: {
+    marginBottom: 30,
+  },
+
+  messageContainer: {
+    flexGrow: 0,
   },
 });

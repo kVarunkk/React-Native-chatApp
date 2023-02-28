@@ -75,7 +75,7 @@ export default function ChooseRoomScreen({ route, navigation }) {
           onChangeText={(text) => setText(text)}
         />
         <Button
-          title="Create"
+          title="Join Room"
           onPress={() => {
             socket.emit("roomName", text);
             navigation.navigate("Chat Screen", { room: text });

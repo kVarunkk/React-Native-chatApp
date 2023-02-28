@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     fontSize: 35,
     marginBottom: 10,
     padding: 15,
-    maxWidth: "80%",
+    // maxWidth: "80%",
     color: "white",
   },
   content: {

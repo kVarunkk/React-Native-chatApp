@@ -3,48 +3,64 @@ const socketio = require("socket.io");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+const { User, Message } = require("./models/File");
 // app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 const server = http.createServer(app);
 const io = socketio(server);
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const cors = require("cors");
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
-// mongoose.connect("mongodb://127.0.0.1/nativeDB", (err) => {
-//   if (err) console.log(err);
-//   else console.log("mongdb is connected");
-// });
-
-// const socket = require("socket.io-client")(
-//   "https://7a15-203-110-242-42.in.ngrok.io"
-// );
-
-// socket.on("connect_error", (err) => {
-//   console.log(`connect_error due to ${err.message}`);
-// });
+mongoose.connect("mongodb://127.0.0.1/nativeDB", (err) => {
+  if (err) console.log(err);
+  else console.log("mongdb is connected");
+});
 
 io.on("connection", (socket) => {
   console.log("New client connected");
   console.log(socket.id);
-  // socket.join("New Room");
-  // app.post("/", (req, res) => {
-  //   console.log(req.body.text);
-  //   socket.join(req.body.text);
-  //   // socket.disconnect();
-  // });
+
+  socket.on("signUp", (user) => {
+    const dbUser = new User({
+      username: user.username,
+      password: user.password,
+    });
+
+    dbUser.save();
+  });
 
   socket.on("roomName", (roomName) => {
-    console.log("Room name1 :" + roomName);
     socket.join(roomName);
   });
 
-  socket.on("message", (msg) => {
+  socket.on("message", async (msg) => {
     console.log("message received");
-    //how to enter room dynamically?
-    console.log("Room name2 :" + msg.room);
+
+    User.findOne({ username: msg.postedBy.username }, (err, user) => {
+      const dbMessage = new Message({
+        content: msg.content,
+        postedBy: user._id,
+        time: msg.time,
+        room: msg.room,
+      });
+      dbMessage.save();
+
+      user.messages.push(dbMessage._id);
+      user.save();
+    });
+
     io.in(msg.room).emit("message", msg);
+  });
+
+  socket.on("getMessages", (room) => {
+    //find a way to get the username of previouse messages from the database
+    Message.find({ room: room })
+      .populate("postedBy")
+      .exec((err, messages) => {
+        io.in(room).emit("setMessages", messages);
+      });
   });
 
   socket.on("disconnect", () => {

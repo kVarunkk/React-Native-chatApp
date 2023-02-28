@@ -17,9 +17,10 @@ import {
 
 // const auth = getAuth();
 
-function SignUp({ navigation }) {
+function SignUp({ route, navigation }) {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const { socket } = route.params;
 
   return (
     <View style={styles.container}>
@@ -44,6 +45,10 @@ function SignUp({ navigation }) {
             .then((userCredential) => {
               // Signed in
               const user = userCredential.user;
+              socket.emit("signUp", {
+                username: email,
+                password: password,
+              });
               navigation.navigate("Choose Room");
               // ...
             })
