@@ -6,7 +6,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import auth from "../database/firebase";
 
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   View,
   Text,
@@ -26,36 +25,11 @@ export default function ChooseRoomScreen({ route, navigation }) {
   const [text, setText] = useState("");
   const { socket } = route.params;
 
-  // const socket = socketIOClient(ENDPOINT);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // Do something when the screen is focused
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
-          const uid = user.uid;
-          // ...
-        } else {
-          // User is signed out
-          // ...
-          navigation.navigate("Sign in");
-        }
-      });
-
-      return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
-      };
-    }, [])
-  );
-
   return (
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.heading}>
-          Create a room and invite your friends to chat!
+          Create Chatroom and invite your friends!
         </Text>
 
         <TextInput
@@ -80,20 +54,6 @@ export default function ChooseRoomScreen({ route, navigation }) {
             socket.emit("roomName", text);
             navigation.navigate("Chat Screen", { room: text });
           }}
-
-          // onPress={async () => {
-          //   await axios
-          //     .post(ENDPOINT, {
-          //       text: text,
-          //     })
-          //     .then(function (response) {
-          //       console.log(response);
-          //       navigation.navigate("Chat Screen");
-          //     })
-          //     .catch(function (error) {
-          //       console.log(error);
-          //     });
-          // }}
         />
       </View>
     </ScrollView>

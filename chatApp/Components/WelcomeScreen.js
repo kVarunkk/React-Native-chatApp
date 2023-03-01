@@ -25,7 +25,9 @@ function WelcomeScreen({ navigation }) {
         />
       </View>
       <Text style={styles.heading}>Welcome to GroupChat 🚀</Text>
-      <Text>Chat, Connect, Collaborate: Together with GroupChat!</Text>
+      <Text style={{ fontSize: 13 }}>
+        Securely Chat, Connect, Collaborate: Together with GroupChat!
+      </Text>
       <View style={styles.buttonContainer}>
         <Button
           title="Sign up"

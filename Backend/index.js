@@ -13,6 +13,34 @@ const cors = require("cors");
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
+//for encryption and decryption
+const crypto = require("crypto");
+const algorithm = "aes-256-cbc";
+const key = Buffer.from(
+  "232f150296ffd446fc0b39fa32d1c1d42c2e232ccd3203df729b7f3c3c63a5da2",
+  "hex"
+);
+const iv = crypto.randomBytes(16);
+
+//encryption function
+function encrypt(text) {
+  let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return { iv: iv.toString("hex"), encryptedData: encrypted.toString("hex") };
+}
+
+//decryption function
+function decrypt(text) {
+  let iv = Buffer.from(text.iv, "hex");
+  let encryptedText = Buffer.from(text.encryptedData, "hex");
+  let decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
+  decipher.setAutoPadding((auto_padding = true));
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString();
+}
+
 mongoose.connect("mongodb://127.0.0.1/nativeDB", (err) => {
   if (err) console.log(err);
   else console.log("mongdb is connected");
@@ -25,7 +53,7 @@ io.on("connection", (socket) => {
   socket.on("signUp", (user) => {
     const dbUser = new User({
       username: user.username,
-      password: user.password,
+      password: encrypt(user.password).encryptedData,
     });
 
     dbUser.save();
@@ -40,7 +68,7 @@ io.on("connection", (socket) => {
 
     User.findOne({ username: msg.postedBy.username }, (err, user) => {
       const dbMessage = new Message({
-        content: msg.content,
+        content: encrypt(msg.content.decryptedMessage),
         postedBy: user._id,
         time: msg.time,
         room: msg.room,
@@ -55,11 +83,26 @@ io.on("connection", (socket) => {
   });
 
   socket.on("getMessages", (room) => {
-    //find a way to get the username of previouse messages from the database
     Message.find({ room: room })
       .populate("postedBy")
       .exec((err, messages) => {
-        io.in(room).emit("setMessages", messages);
+        if (!err) {
+          let temporaryMessages = JSON.parse(JSON.stringify(messages));
+
+          if (temporaryMessages.length > 0) {
+            temporaryMessages.map((temporaryMessage) => {
+              try {
+                temporaryMessage.content = {
+                  decryptedMessage: decrypt(temporaryMessage.content),
+                };
+                console.log(decrypt(temporaryMessage.content));
+              } catch (error) {
+                console.log(error);
+              }
+            });
+          }
+          io.in(room).emit("setMessages", temporaryMessages);
+        } else console.log(err);
       });
   });
 

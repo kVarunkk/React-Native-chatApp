@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
 
 const messageSchema = new mongoose.Schema({
   content: {
-    type: String,
+    type: Object,
   },
   postedBy: {
     type: mongoose.Schema.Types.ObjectId,

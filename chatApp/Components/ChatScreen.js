@@ -6,7 +6,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import auth from "../database/firebase";
 import moment from "moment";
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import {
   View,
   Text,
@@ -19,7 +19,6 @@ import {
   StatusBar,
 } from "react-native";
 import Message from "./Message";
-// const ENDPOINT = "https://7a15-203-110-242-42.in.ngrok.io";
 
 export default function ChatScreen({ route, navigation }) {
   const { socket, room } = route.params;
@@ -69,13 +68,14 @@ export default function ChatScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>{room}</Text>
-
+      <Text style={{ fontSize: 12, textAlign: "center", marginBottom: 10 }}>
+        Your chats are end-to-end encrypted
+      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={{
             height: 40,
             padding: 10,
-            // width: "70%",
             borderColor: "gray",
             backgroundColor: "#fff",
             borderRadius: 5,
@@ -91,7 +91,9 @@ export default function ChatScreen({ route, navigation }) {
           title="Send"
           onPress={() => {
             socket.emit("message", {
-              content: text,
+              content: {
+                decryptedMessage: text,
+              },
               postedBy: {
                 username: username,
               },
@@ -105,17 +107,15 @@ export default function ChatScreen({ route, navigation }) {
 
       <View style={{ maxHeight: "70%" }}>
         <ScrollView style={styles.messageContainer}>
-          {/* <View > */}
           {messages.map((message) => {
             return (
               <Message
-                text={message.content}
+                text={message.content.decryptedMessage}
                 username={message.postedBy.username}
                 time={message.time}
               ></Message>
             );
           })}
-          {/* </View> */}
         </ScrollView>
       </View>
     </View>
@@ -124,11 +124,6 @@ export default function ChatScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    // display: "flex",
-    // flexDirection: "column",
-    // paddingTop: StatusBar.currentHeight,
-    // alignItems: "center",
-    // justifyContent: "center",
     textAlign: "center",
     width: "100%",
     padding: 30,
@@ -138,7 +133,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 30,
+    marginBottom: 10,
   },
 
   inputContainer: {

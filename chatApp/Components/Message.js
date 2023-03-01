@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   messageBox: {
     display: "flex",
     justifyContent: "space-between",
-    backgroundColor: "#D3D3D3",
+    backgroundColor: "#E0E0E0",
     borderRadius: 10,
     fontSize: 35,
     marginBottom: 10,
