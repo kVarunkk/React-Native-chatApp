@@ -21,7 +21,7 @@ import {
 } from "react-native";
 
 const Stack = createNativeStackNavigator();
-const ENDPOINT = "https://6d9e-203-110-242-44.in.ngrok.io";
+const ENDPOINT = "https://b5b7-203-110-242-40.in.ngrok.io";
 const socket = socketIO.connect(ENDPOINT);
 
 export default function App({ navigation }) {

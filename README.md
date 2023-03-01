@@ -1,3 +1,16 @@
 # React-Native-chatApp
 
-Group chat app made using React native
+Group chat app with room functionality and end-to-end encryption made using React native
+
+![welcome-screen](WelcomeScreen.jpg)
+![signin-screen](SignIn.jpg)
+![choose-room-screen](ChooseRoom.jpg)
+![chat-screen](ChatScreen.jpg)
+
+## Features
+
+- End-to-end encryption using cryptoJS
+- User authentication via Firebase
+- Realtime chatting via Socket.io
+- User can create a custom room and invite other users to that room
+- Encrypted messages saved in the MongoDB database
