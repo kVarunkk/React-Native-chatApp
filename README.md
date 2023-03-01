@@ -3,7 +3,7 @@
 Group chat app with room functionality and end-to-end encryption made using React native
 
 <!-- ![welcome-screen](WelcomeScreen.jpg | width='150' height='300') -->
-<img src="WelcomeScreen.jpg" width= "100" height= "300">
+<img src="WelcomeScreen.jpg" width= "300" height= "auto">
 ![signin-screen](SignIn.jpg)
 ![choose-room-screen](ChooseRoom.jpg)
 ![chat-screen](ChatScreen.jpg)
